@@ -1,0 +1,105 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% block title %}<title></title>{% endblock %}
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/static/css/main.css?{% now "U" %}"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+</head>
+<body>
+{% block script %}
+<script type="text/javascript">
+function showEditPopup(url) {
+    var win = window.open(url, "Edit",
+        'height=500,width=800,resizable=yes,scrollbars=yes');
+    return false;
+}
+function showAddPopup(triggeringLink) {
+    $("#display").text(triggeringLink)
+    var name = triggeringLink.id.replace(/^add_/, '');
+    href = triggeringLink.href;
+    var win = window.open(href, name, 'height=500,width=800,resizable=yes,scrollbars=yes');
+    win.focus();
+    return false;
+}
+function closePopup(win, newID, newRepr, id) {
+    $(id).append('<option value=' + newID + ' selected >' + newRepr + '</option>')
+    win.close();
+}
+
+    $(document).ready(function(){
+$("#edit_category").click(function(){
+    category_name = $("#id_category option:selected").text();
+	//var data = {"author_name":author_name};
+    $.ajax({
+        type : 'GET',
+        url :  '/category/ajax/get_category_id',
+        data : {
+            "category_name":category_name
+        },
+        success : function(data){
+        	var url = "/category/" + data['category_id'] + "/edit/";
+        	showEditPopup(url);
+        },
+        error: function(data) {
+          alert("Something Went Wrong");
+        }
+  	});
+})
+});
+</script>
+{% endblock %}
+
+<nav class="navbar fixed-top navbar-expand-md navbar-dark bg-dark">
+    <a href="{% url 'ecommerce_app:home' %}" class="navbar-brand">E-Shop</a>
+    <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+        <div class="navbar-nav">
+            <a href="{% url 'ecommerce_app:home' %}" class="nav-item nav-link {% ifequal request.path '/home/'%} active {% endifequal%}">
+                <i class="fa fa-fw fa-home"></i> Home</a>
+
+            {% if user.is_active and user.is_superuser %}
+                <a href="{% url 'ecommerce_app:all_products' %}" class="nav-item nav-link
+                    {% ifequal request.path '/all_products/'%} active {% endifequal%}">
+                    <i class="fa fa-fw fa-product-hunt"></i> Products</a>
+            {% endif %}
+        </div>
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <a class="nav-link {% ifequal request.path '/user_cart/'%} active {% endifequal%}"
+                   href="{% url 'ecommerce_app:user_cart' %}"><i class="fa fa-shopping-cart"> Cart</i>
+                </a>
+            </li>
+            {% if user.is_authenticated %}
+                <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">
+                    <i class="fa fa-sign-out">Logout</i></a>
+                </li>
+            {% else %}
+                <li class="nav-item"><a class="nav-link {% ifequal request.path '/accounts/login/'%} active {% endifequal%}" href="{% url 'login' %}">
+                    <i class="fa fa-sign-in"> Login</i></a>
+                </li>
+                <li class="nav-item"><a class="nav-link {% ifequal request.path '/register/'%} active {% endifequal%}" href="{% url 'accounts:register' %}">
+                    <i class="fa fa-sign-up"> Sign Up</i></a>
+                </li>
+            {% endif %}
+        </ul>
+    </div>
+</nav>
+{% block content %}
+{% endblock %}
+<br>
+</body>
+
+</html>

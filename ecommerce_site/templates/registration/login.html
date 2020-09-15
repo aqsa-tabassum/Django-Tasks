@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block title %}
+<title>Sign in</title>
+{% endblock %} {% block content %}
+<br />
+<br />
+<br />
+<div class="card ml-3" style="width: 450px; height: 320px;">
+    <div class="card-body">
+        <div class="container">
+            <h2 style="font-family: 'Open Sans';">Login</h2>
+            <form method="post" novalidate>
+                {% csrf_token %}
+                {{ form|crispy }}
+                <br />
+                <button class="btn btn-primary" type="submit">Login</button>
+                <a class="btn btn-link" href="{% url 'accounts:register' %}">Click here to create new account.</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

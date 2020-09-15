@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% load product_cart_filters %}
+{% load static %}
+
+{% block title %}
+    <title>Home</title>
+{% endblock %}
+
+{% block content %}
+<div class="row" style="height: 100px; background-color: whitesmoke; margin-top: 50px;">
+     <form method="post" class="form-inline ml-4">
+         {% csrf_token %}
+            <input name="product_input" type="text" style="width: 350px;" class="form-control mr-sm-1"
+                   placeholder="Search Product">
+            <button style="width: 100px;" type="submit" class="btn btn-success">Search</button>
+     </form>
+    {% if user.is_active and user.is_superuser %}
+    <ul class="navbar-nav ml-auto mt-4">
+        <li class="mr-4">
+            <a href = "show_unseen_product_requests/" class="notification border-0">
+                <i class="fa fa-envelope"></i>
+                <span class="badge">{{ new_product_requests_count }}</span>
+            </a>
+        </li>
+    </ul>
+    {% endif %}
+</div>
+     {% if messages %}
+         {% for message in messages %}
+             <div  id="success-alert" class="alert alert-danger alert-dismissible" role="alert">{{ message }}</div>
+         {% endfor %}
+     {% endif %}
+    <br>
+    <!--Here unique categories will go here in tabs for home page-->
+<div class="container">
+<ul class="nav nav-pills">
+<li class="nav-item">
+{% if categories %}
+    <a class="nav-link {% if request.resolver_match.view_name == 'ecommerce_app:home' %}active{% endif %}"
+       href="{% url 'ecommerce_app:home' %}">All</a></li>
+  {% for category in categories %}
+        <li class="nav-item">
+            <a class="nav-link"
+               href="{% url 'ecommerce_app:category_wise_products' category %}">{{ category }}</a>
+        </li>
+    {% endfor %}
+{% endif %}
+</ul>
+<br>
+
+<!--Displaying all products, as well as products according to clicked tab-->
+<h3 style="font-family: 'Times New Roman'; color: blue;">{{ category_heading }}</h3>
+<div class="row">
+    {% for product in products %}
+        <div class='card' id="{{ product.id }}" style="padding: 0; border: 4px solid white; background-color: whitesmoke">
+        <div class="card-body">
+            <img src="{{ product.image.url }}"  alt = "" class="img-fluid" style="height: 230px;">
+            <p class="text-center">{{ product.name }}</p>
+            <p class="text-center text-danger">{{ product.price }}</p>
+            <!-- product| is_product_in_cart:request.session.cart }}-->
+        </div>
+        <div class="footer">
+           {% if product|is_product_in_cart:request.session.cart%}
+             <div class="row no-gutters">
+                <form method="post" class="col-2">
+                    {% csrf_token %}
+                    <input type="text" hidden name="product_id" value="{{ product.id }}">
+                    <input type="text" hidden name="is_product_removed" value="True">
+                    <input type="submit" value=" - " class="btn btn-block btn-success p-0">
+                </form>
+                <div class="text-center col">{{ product|product_count_in_cart:request.session.cart }} in cart</div>
+                <form method="post" class="col-2">
+                    {% csrf_token %}
+                    <input type="text" hidden name="product_id" value="{{ product.id }}">
+                    <input type="submit" value=" + " class="btn btn-block btn-success p-0">
+                </form>
+            </div>
+            {% else %}
+            <form method="post" action="/#{{product.id}}" class = 'btn-block'>
+                {% csrf_token %}
+                <input hidden name="product_id"  type="text" value="{{ product.id }}">
+                <button class="btn btn-danger float-right">Add to Cart</button>
+            </form>
+            {% endif %}
+        </div>
+        </div>
+    {% endfor %}
+</div>
+</div>
+{% endblock %}

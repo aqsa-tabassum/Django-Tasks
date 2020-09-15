@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% block content %}
+<div class="container">
+    <br />
+    <br />
+    <br />
+    <br />
+    <h1>Add Product</h1>
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.name|as_crispy_field }}
+        {{ form.arrival_date|as_crispy_field }}
+        {{ form.price|as_crispy_field }}
+        {{ form.inventory_count|as_crispy_field }}
+        {{ form.brand|as_crispy_field }}
+        {{ form.vendor|as_crispy_field }}
+        {{ form.image|as_crispy_field }}
+        {{ form.category|as_crispy_field }}
+
+        <a class="btn btn-success" href="{% url 'ecommerce_app:create_category' %}" id="add_author" onclick="return showAddPopup(this);"> add category</a>
+        <a class="btn btn-danger" id="edit_category" style="color: white;"> edit category</a><br />
+        <br />
+        <input class="btn btn-primary" type="submit" value="Submit" />
+    </form>
+</div>
+{% endblock %}
