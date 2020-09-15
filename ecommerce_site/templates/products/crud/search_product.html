@@ -1,0 +1,29 @@
+{% extends 'base.html' %} {% block content %} <br />
+<br />
+<br />
+<div class="container">
+    <!--When User search for a product, products will display here.-->
+    <div class="row">
+        {% if filtered_product %} {% for product in filtered_product %}
+        <div class="col-sm-3" style="height: 365px; background-color: whitesmoke; border: 6px solid white;">
+            <img src="{{ product.image.url }}" alt="" class="img-fluid" />
+            <center>
+                <h3>{{ product.name }}</h3>
+                <h4 style="color: red;">{{ product.price }}</h4>
+            </center>
+            <button style="width: 250px;" class="btn btn-danger">Add to Cart</button>
+        </div>
+        {% endfor %}
+        {% else %}
+        <div class="container">
+            <div class="alert alert-info alert-dismissible">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                <strong>Not Found!</strong> No similar Products found
+            </div>
+            Do you want to request for this product. Click
+            <a href="{% url 'ecommerce_app:request_new_product' %}"> Here</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

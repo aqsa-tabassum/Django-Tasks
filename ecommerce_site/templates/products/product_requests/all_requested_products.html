@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block content %}
+<br />
+<br />
+<br />
+<div class="container">
+    <div class="border rounded p-4 m-4">
+        <h3 class="float-left">Unseen Product Requests</h3>
+        <a href="mark_requests_as_read/" class="btn btn-success float-right">Marked as read</a>
+        <br />
+        <table class="table table-bordered">
+            <tbody>
+                <tr>
+                    <th>S.no</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Product Name</th>
+                    <th>Product Type</th>
+                    <th>Description</th>
+                </tr>
+                {% if unseen_products_requests %} {% for product_request in unseen_products_requests %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ product_request.name }}</td>
+                    <td>{{ product_request.email }}</td>
+                    <td>{{ product_request.product_name }}</td>
+                    <td>{{ product_request.product_type }}</td>
+                    <td>{{ product_request.product_description }}</td>
+                </tr>
+                {% endfor %} {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
